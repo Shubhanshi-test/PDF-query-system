@@ -1,0 +1,6 @@
+pdfplumber
+pandas
+duckdb
+neo4j
+transformers
+sentence-transformers
