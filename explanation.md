@@ -1,6 +1,6 @@
 # PDF Query System for Complex Tables: Final Approach
 
-## 1️⃣ Problem Statement
+## 1 Problem Statement
 We need to query **complex tables** in PDFs that contain:
 - **Multi-row headers** (e.g., sub-categories in tables).
 - **Merged cells** (e.g., qualifications spread across columns).
@@ -9,10 +9,10 @@ We need to query **complex tables** in PDFs that contain:
 
 ### Example Query:
 _"What is the qualification of Titanium Alloy?"_  
-The system should extract **Titanium Alloy**, find its **Qualification**, and return the correct value.
+The system should extract **Materials**, find its **Qualification**, and return the correct value.
 
 ---
-## 2️⃣ Best Approach: Hybrid (ColPali + SQL + GraphDB + ML)
+## 2 Best Approach: Hybrid (ColPali + SQL + GraphDB + ML)
 ### **🔹 Step 1: Extract Tables from PDFs**
 - **Tool:** `pdfplumber` + **ColPali** (Column Parsing and Linking).  
 - **Why?** ColPali improves extraction for **complex tables with multi-row headers**.  
@@ -36,11 +36,10 @@ The system should extract **Titanium Alloy**, find its **Qualification**, and re
 - Present the answer as **structured text or table output**.
 
 ---
-## **🔥 Why This Approach?**
+## ** Why This Approach?**
 | **Method** | **Scalability** | **Speed** | **Handles Complex Tables?** | **Handles Cross-References?** |
 |------------|---------------|----------|------------------------|---------------------|
-| **Basic SQL** | ✅ High | ⚡ Fast | ❌ No | ❌ No |
-| **ColPali + SQL** | ✅ High | ⚡ Fast | ✅ Yes | ❌ No |
-| **ColPali + GraphDB + ML** (Recommended) | ✅✅ Very High | ⚡⚡ Fast | ✅✅ Yes | ✅✅ Yes |
+| **Basic SQL** | High |  Fast |  No |  No |
+| **ColPali + SQL** |  High |  Fast |  Yes |  No |
+| **ColPali + GraphDB + ML** (Recommended) | Very High |  Fast |  Yes |  Yes |
 
-**🚀 This approach ensures accurate and scalable PDF querying for complex tables.**
