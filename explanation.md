@@ -13,16 +13,16 @@ The system should extract **Beta Annealed Ti64**, find its **Tensile strength**,
 
 ---
 ## 2 Best Approach: Hybrid (ColPali + SQL + GraphDB + ML)
-### **Step 1: Extract Tables from PDFs**
+### Step 1: Extract Tables from PDFs
 - **Tool:** `pdfplumber` + **ColPali** (Column Parsing and Linking).  
 - **Why?** ColPali improves extraction for **complex tables with multi-row headers**.  
 - **Storage:** Convert extracted tables into **structured Pandas DataFrames**.
 
-### ** Step 2: Store Data in GraphDB + SQL**
+### Step 2: Store Data in GraphDB + SQL
 - **SQL (DuckDB)** for **fast structured lookups**.
 - **GraphDB (Neo4j)** for **handling relationships** between table entities.
 
-### ** Step 3: Query Understanding with ML**
+### Step 3: Query Understanding with ML
 - Use **NER (BERT-based model)** to extract keywords from query.
 - Identify the **material and attribute** the user is asking about.
 
