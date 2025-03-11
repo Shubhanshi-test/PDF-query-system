@@ -26,17 +26,17 @@ The system should extract **Beta Annealed Ti64**, find its **Tensile strength**,
 - Use **NER (BERT-based model)** to extract keywords from query.
 - Identify the **material and attribute** the user is asking about.
 
-### ** Step 4: Query Execution (Graph + SQL + Semantic Search)**
+### Step 4: Query Execution (Graph + SQL + Semantic Search)
 1. **GraphDB Query:** If a direct relation exists (fastest).  
 2. **Semantic Search:** If exact match is missing, use **BERT embeddings** to find the closest entry.  
 3. **SQL Query:** As a fallback, search structured tables directly.
 
-### ** Step 5: Generate Answer (LLM-assisted Response)**
+### Step 5: Generate Answer (LLM-assisted Response)
 - Use **Llama 3 or GPT-4** to synthesize the response.
 - Present the answer as **structured text or table output**.
 
 ---
-## ** Why This Approach?**
+##  Why This Approach?
 | **Method** | **Scalability** | **Speed** | **Handles Complex Tables?** | **Handles Cross-References?** |
 |------------|---------------|----------|------------------------|---------------------|
 | **Basic SQL** | High |  Fast |  No |  No |
