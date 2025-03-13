@@ -1,0 +1,35 @@
+# Architecture Document: Generalized PDF Query System
+
+## 1. Overview
+This system extracts, stores, and queries **any structured data** from PDFs using:
+- **ColPali** for complex table extraction
+- **DuckDB** for fast structured queries
+- **Neo4j (GraphDB)** for storing relationships across all data types
+- **ML-based Semantic Search** for fuzzy queries
+
+## 2. System Flow
+
+### Step 1: Extract Tables from PDFs
+- **Tool Used:** ColPali (Automatically detects and extracts all tables)
+- **Why?** Handles complex, multi-format tables
+
+### Step 2: Store Data in DuckDB (SQL Queries)
+- **Why?** In-memory database for super-fast lookups
+
+### Step 3: Store in Neo4j (GraphDB for Relationships)
+- **Why?** Enables complex queries about **any** data relationships
+
+### Step 4: Query Processing Pipeline
+1. **GraphDB Lookup** → If structured data exists, return directly
+2. **SQL Lookup (DuckDB)** → Find exact matches in tabular data
+3. **ML-Based Semantic Search** → Fuzzy matching using vector embeddings
+
+## 3. Performance Optimization
+- **GraphDB for structured relationships** (O(1) lookup time)
+- **DuckDB for fast SQL** (Optimized for analytics queries)
+- **Semantic Search for fallback** (Uses efficient vector embeddings)
+
+## 4. Why This Approach?
+- **Handles complex tables in any format**
+- **Supports structured + unstructured data queries**
+- **Scalable for large document sets (Neo4j & DuckDB)**
