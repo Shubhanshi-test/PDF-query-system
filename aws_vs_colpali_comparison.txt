@@ -1,0 +1,71 @@
+Comparison of ColPali-Based PDF Processing vs. AWS Textract + Kendra + Lex + SageMaker
+
+### 1. ColPali-Based PDF Processing Flow
+1. **PDF Extraction (pdfplumber)**
+   - Extracts tables and text from PDF files.
+   - Converts tables into structured formats (DuckDB, Neo4j).
+
+2. **Storage & Querying**
+   - Stores extracted tables in DuckDB (structured queries).
+   - Stores table relationships in Neo4j (graph queries).
+
+3. **Semantic Retrieval (ColPali)**
+   - Uses a transformer-based multimodal model (text + image) for semantic search.
+   - Embeds images and text for retrieval based on similarity.
+
+4. **Query Processing (ML Model)**
+   - If query relates to structured data -> Neo4j lookup.
+   - If query relates to unstructured/semantic content -> ColPali retrieval.
+   - Uses custom embeddings + transformer inference.
+
+---
+
+### 2. AWS-Based Solution Flow (Textract + Kendra + Lex + SageMaker)
+1. **PDF Processing (Textract + Comprehend)**
+   - Textract extracts text and table data.
+   - Comprehend processes extracted text for entities/sentiment.
+
+2. **Storage & Querying**
+   - Indexes extracted text in Kendra for search.
+   - Uses structured DB (DynamoDB/RDS) for tabular data.
+
+3. **ML-Based Search (Kendra + SageMaker)**
+   - Uses ML-powered Kendra for intelligent document search.
+   - Can integrate SageMaker models for advanced NLP/semantic search.
+
+4. **Conversational Querying (Lex + Gen AI)**
+   - Lex chatbot interacts with users.
+   - Uses Gen AI models in SageMaker for response generation.
+
+---
+
+### 3. Key Differences
+| Feature | ColPali-Based Approach | AWS-Based Approach |
+|---------|-------------------------|---------------------|
+| **PDF Extraction** | Uses `pdfplumber` for table & text extraction | Uses `Textract` + `Comprehend` |
+| **Storage** | DuckDB (structured) + Neo4j (graph) | DynamoDB/RDS (structured) + Kendra (search) |
+| **Search** | Semantic retrieval with `ColPali` (text + image embeddings) | Keyword + ML-based retrieval with `Kendra` |
+| **ML Model** | Transformer-based retrieval (ColPali) | SageMaker models for NLP |
+| **Querying** | Neo4j for structured, ColPali for semantic | Lex chatbot + Gen AI |
+
+---
+
+### 4. Strengths & Weaknesses
+#### **ColPali-Based Approach**
+✅ Strengths:
+- Better multimodal retrieval (text + images).  
+- Graph-based querying via Neo4j.  
+- Runs on local infrastructure (no AWS dependency).  
+
+⚠️ Weaknesses:
+- Requires manual model deployment.  
+- Limited to transformer-based retrieval.  
+
+#### **AWS-Based Approach**
+✅ Strengths:
+- Fully managed (Textract, Kendra, Lex, SageMaker).  
+- Scalable & integrates well with AWS ecosystem.  
+
+⚠️ Weaknesses:
+- Higher cost for managed services.  
+- May require fine-tuning for better retrieval.  
