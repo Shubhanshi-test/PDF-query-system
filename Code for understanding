@@ -1,0 +1,199 @@
+!pip install gradio transformers sentence-transformers pytesseract pymupdf faiss-cpu spacy
+!sudo apt install tesseract-ocr
+!python -m spacy download en_core_web_lg
+
+import gradio as gr
+from sentence_transformers import SentenceTransformer
+from transformers import pipeline
+import fitz  # PyMuPDF
+import pytesseract
+from PIL import Image
+import faiss
+import numpy as np
+import os
+import re
+import spacy
+from google.colab import drive
+
+# Mount Google Drive
+drive.mount('/content/drive')
+
+# Load models
+def load_models():
+    embedding_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+    qa_pipeline = pipeline('question-answering', model="deepset/roberta-base-squad2")
+    nlp = spacy.load("en_core_web_lg")
+    return embedding_model, qa_pipeline, nlp
+
+embedding_model, qa_pipeline, nlp = load_models()
+
+# Text extraction with OCR fallback
+def extract_text_from_page(doc, page_num):
+    page = doc.load_page(page_num)
+    text = page.get_text().strip()
+    if len(text) < 20:  # If text extraction seems poor, try OCR
+        pix = page.get_pixmap(dpi=300)
+        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+        text = pytesseract.image_to_string(img).strip()
+    return text
+
+# Load PDFs from a directory and build text passage list
+def load_pdfs_from_directory(directory_path):
+    passages, meta = [], []
+
+    if not os.path.exists(directory_path):
+        return passages, meta
+
+    for filename in os.listdir(directory_path):
+        if filename.lower().endswith('.pdf'):
+            filepath = os.path.join(directory_path, filename)
+            try:
+                doc = fitz.open(filepath)
+                for page_num in range(len(doc)):
+                    text = extract_text_from_page(doc, page_num)
+                    if text.strip():
+                        passages.append(text)
+                        meta.append({
+                            "filename": filename,
+                            "page": page_num + 1,
+                            "filepath": filepath
+                        })
+            except Exception as e:
+                print(f"Error processing {filename}: {str(e)}")
+    return passages, meta
+
+# Analyze question
+def understand_question(question):
+    doc = nlp(question)
+    params, units, conditions = [], [], []
+
+    for ent in doc.ents:
+        if ent.label_ in ["QUANTITY", "CARDINAL"]:
+            params.append(ent.text)
+        elif ent.label_ == "UNIT":
+            units.append(ent.text)
+
+    for token in doc:
+        if token.pos_ in ["NOUN", "PROPN"] and token.text.lower() not in ["what", "which"]:
+            params.append(token.text)
+        elif token.pos_ == "ADJ":
+            conditions.append(token.text)
+
+    return {
+        "parameters": list(set(params)),
+        "units": list(set(units)),
+        "conditions": list(set(conditions))
+    }
+
+# Find relevant text
+def find_relevant_text(passages, question_analysis):
+    relevant_texts = []
+    for text in passages:
+        text_lower = text.lower()
+        param_matches = sum(param.lower() in text_lower for param in question_analysis["parameters"])
+        unit_matches = sum(unit.lower() in text_lower for unit in question_analysis["units"])
+        if param_matches > 0 and (len(question_analysis["units"]) == 0 or unit_matches > 0):
+            relevant_texts.append(text)
+    return relevant_texts
+
+# Get answer
+def extract_answer(question, context):
+    try:
+        result = qa_pipeline(question=question, context=context)
+        return result['answer']
+    except Exception as e:
+        return f"Could not extract answer: {e}"
+
+# Global variables to store the index and metadata
+global_index = None
+global_meta = None
+global_passages = None
+
+def initialize_system(directory_path):
+    global global_index, global_meta, global_passages
+
+    # Load PDFs and build index
+    passages, meta = load_pdfs_from_directory(directory_path)
+
+    if not passages:
+        return "No PDFs found or could not process any PDFs in the specified directory."
+
+    # Create embeddings and FAISS index
+    passage_embeddings = embedding_model.encode(passages, show_progress_bar=True)
+    dimension = passage_embeddings.shape[1]
+    index = faiss.IndexFlatL2(dimension)
+    index.add(np.array(passage_embeddings))
+
+    # Store globally
+    global_index = index
+    global_meta = meta
+    global_passages = passages
+
+    return f"System initialized with {len(passages)} text passages from PDFs in {directory_path}"
+
+def answer_question(question):
+    global global_index, global_meta, global_passages
+
+    if global_index is None:
+        return "System not initialized. Please specify a directory with PDFs first."
+
+    if not question:
+        return "Please enter a question."
+
+    try:
+        question_analysis = understand_question(question)
+        q_embedding = embedding_model.encode([question])
+        D, I = global_index.search(q_embedding, 5)  # Get top 5 matches
+        candidate_passages = [global_passages[i] for i in I[0]]
+        relevant_texts = find_relevant_text(candidate_passages, question_analysis)
+
+        if not relevant_texts:
+            return "No relevant information found in the documents."
+
+        context = " ".join(relevant_texts[:3])
+        answer = extract_answer(question, context)
+        source_idx = I[0][0]
+        source = global_meta[source_idx]
+
+        return f"Answer: {answer}\n\nSource: {source['filename']}, Page {source['page']}\nFile path: {source['filepath']}"
+    except Exception as e:
+        return f"Error processing question: {str(e)}"
+
+# Gradio interface
+with gr.Blocks(title="PDF QA Chatbot") as demo:
+    gr.Markdown("# 📄 PDF QA Chatbot for Material Specs")
+    gr.Markdown("Search through PDFs in your Google Drive for material property information.")
+
+    with gr.Row():
+        with gr.Column():
+            drive_path = gr.Textbox(
+                label="Google Drive Path to PDFs",
+                placeholder="e.g., /content/drive/MyDrive/chatbot",
+                value="/content/drive/MyDrive/chatbot"  # Default path
+            )
+            init_btn = gr.Button("Initialize System with PDFs")
+            init_status = gr.Textbox(label="Initialization Status", interactive=False)
+
+        with gr.Column():
+            question = gr.Textbox(
+                label="Ask a question about the material specifications",
+                placeholder="What is the tensile strength of Material X?"
+            )
+            ask_btn = gr.Button("Ask Question")
+            answer = gr.Textbox(label="Answer", interactive=False)
+
+    # Event handlers
+    init_btn.click(
+        fn=initialize_system,
+        inputs=drive_path,
+        outputs=init_status
+    )
+
+    ask_btn.click(
+        fn=answer_question,
+        inputs=question,
+        outputs=answer
+    )
+
+# Launch the interface
+demo.launch(share=True)
