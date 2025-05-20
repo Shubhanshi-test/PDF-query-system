@@ -5,3 +5,4 @@ https://sites.google.com/airbus.com/pwd-userguide/windows#h.b8jkn6walye8
 New link = https://colab.research.google.com/drive/1__kZenZVsMRHOggsbHHZ5XQxLl3wMPy1?usp=sharing
 
 Pdf data drive link = https://drive.google.com/drive/folders/1Hbx01LSRVz8AvX652HVi3DCoQ5fiAF9o?usp=sharing
+What is the tensile strength for Titanioum Alloy Ti-6AI-4V βAnnealed Plates as per the specification for a 55mm plate?
