@@ -197,3 +197,97 @@ with gr.Blocks(title="PDF QA Chatbot") as demo:
 
 # Launch the interface
 demo.launch(share=True)
+
+🔷 1. Input Phase
+✅ User Input: Directory Path
+The user provides the Google Drive path where PDFs are stored.
+
+Example: /content/drive/MyDrive/chatbot
+
+🔶 2. Initialization Phase (System Setup)
+🔍 PDF Loading
+The system iterates through all PDFs in the given directory.
+
+For each page:
+
+Extracts text directly using PyMuPDF.
+
+If text is too short (e.g., less than 20 characters), uses OCR (Tesseract) on the page image.
+
+🧱 Passage Construction
+All extracted text is broken down into passages.
+
+Each passage is linked with:
+
+Filename
+
+Page number
+
+File path
+
+🔠 Embedding
+Uses SentenceTransformer (all-MiniLM-L6-v2) to generate vector embeddings for each passage.
+
+🧠 Indexing
+Stores all passage embeddings in a FAISS vector index.
+
+This allows for fast semantic search of relevant content.
+
+🟢 3. Interaction Phase
+✅ User Input: Question
+The user asks a natural language question (e.g., "What is the tensile strength of Material X?")
+
+🟡 4. Question Processing Phase
+🧠 Semantic Parsing
+Uses spaCy NLP model (en_core_web_lg) to extract:
+
+Parameters (quantities, materials, entities)
+
+Units (e.g., MPa, °C)
+
+Conditions (adjectives or qualifiers)
+
+🔠 Embedding of Question
+The question is embedded into a vector using SentenceTransformer.
+
+🔵 5. Information Retrieval Phase
+🔍 FAISS Search
+The embedded question is searched against the FAISS index.
+
+Returns the top 5 most semantically similar passages.
+
+🔎 Relevance Filtering
+Filters these passages further:
+
+Matches extracted parameters and units with the passage content.
+
+🟣 6. Answer Extraction Phase
+🤖 Answer Generation
+Uses a Transformer QA model (deepset/roberta-base-squad2).
+
+Provides the question and filtered passages as context.
+
+Model returns a short answer span from the context.
+
+🟠 7. Output Phase
+🧾 Result Display
+Shows:
+
+Final answer
+
+Source filename
+
+Page number
+
+Full file path
+
+✅ Gradio Interface
+The entire workflow is tied together with a Gradio UI:
+
+Textboxes for directory and question
+
+Buttons for initializing and querying
+
+Output areas for status and answer
+
+Let me know if you want a simplified flow (e.g., for a slide), a diagram with icons, or a downloadable version of this!
