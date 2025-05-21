@@ -1,0 +1,51 @@
+{
+    "What is the tensile strength for Titanium Alloy Ti-6AI-4V βAnnealed Plates as per the specification for a 55mm plate?": {
+        "answer": "900<= Rm<=1600",
+        "source": "AIMS_03-18-007_2021-09_5 (1).pdf, page 1"
+    },
+    "What are the observed tensile Yield results for the supplier VSMPO for TI64 Beta Annealed Plates for thickness 55mm?": {
+        "answer": "55mm to 90mm",
+        "source": "QTR140830_i1.pdf, page 19"
+    },
+    "What is the method of melting for Precipitation Hardened Stainless Steel?" : {
+       "answer": "The method of melting for Precipitation Hardened Stainless Steel involves Vacuum Induction Melting (VIM) followed by Vacuum Arc Remelting (VAR)."
+       "source" : "1AIMS_01-04-004_2013-07_2 (2).pdf, page 4"
+    },
+    "What is the tensile strength limit for Precipitation Hardened Stainless Steel as per the specification for a 75mm plate?" :
+    {
+      "answer" : "The specified tensile strength for a 75mm plate of Precipitation Hardened Stainless Steel ranges between 1210 MPa and 1350 MPa."
+      "source" : "1AIMS_01-04-004_2013-07_2 (2).pdf, page 4"
+      
+    },
+    "What is the observed tensile proof stress for Precipitation Hardened Stainless Steel as per the specification for a 75mm plate?" :
+    {
+      "answer" : "The observed tensile proof stress for a 75mm plate of Precipitation Hardened Stainless Steel is equal to or greater than 1150 MPa."
+      "source" : "1AIMS_01-04-004_2013-07_2 (2).pdf, page 4"
+
+    },
+    "What is the density specification for Precipitation Hardened Stainless Steel?" :
+    {
+      "answer" : "The specified density for Precipitation Hardened Stainless Steel is 775 × 10³ kg/m³."
+      "source" : "1AIMS_01-04-004_2013-07_2 (2).pdf, page 5"   
+    },
+    "What will be the macrostructure severity for ring pattern and radial segregation?" :
+    {
+      "answer" : "The macrostructure severity is classified as 'B' for ring pattern and 'A' for radial segregation."
+      "source" : "1AIMS_01-04-004_2013-07_2 (2).pdf, page 5" 
+    },
+    "What is the tensile proof stress for Alpha-Beta Titanium Alloy (Ti-6Al-4V) Hot Isostatically Pressed and Annealed Investment Casting?" :
+    {
+      "answer" :  "The tensile proof stress for the Alpha-Beta Titanium Alloy (Ti-6Al-4V), when hot isostatically pressed and annealed as an investment casting, is 780 MPa."
+      "source" : "3AIMS_03-21-002_2022-02_2 (1).pdf, page 4"
+    },
+    "What is the shear strength for Alpha-Beta Titanium Alloy (Ti-6Al-4V) Hot Isostatically Pressed and Annealed Investment Casting?" :
+    {
+      "answer" : "The shear strength for the same alloy and processing condition is 585 MPa."
+      "source" : "3AIMS_03-21-002_2022-02_2 (1).pdf, page 4"
+    },
+    "Who is the manufacturer for Wrought round bars?" :
+    {
+      "answer" : "The manufacturer for Wrought round bars is AUBERT DUVAL – LES ANCIZES, with manufacturer code 263607."
+      "source" : "4QTR141024_i2 (1)(1).pdf, page 2"
+    }
+}
